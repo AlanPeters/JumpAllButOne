@@ -31,11 +31,11 @@ function startPlay(board){
 
 function play(board, depth){
     if(depth === 13){
-        console.log("played full game");
+        console.log("Played full game");
         console.log("Solved in "+ tries + " tries");
         //return true;
-        return board[0][0] !== -1;
-        //return board[0][0] === 4;
+        return board[0][0] !== -1; //Tip has the last peg
+        //return board[0][0] === 4; //Middle pin ends in the tip
     }
     tries++;
     //check available moves
@@ -45,97 +45,49 @@ function play(board, depth){
             //jump right
             if(k + 2 <= i && board[i][k+2] == -1 && board[i][k+1] != -1){
                 //console.log(board[i][k]+" can jump right");
-                var jumped = board[i][k+1];
-                board[i][k+1] = -1;
-                board[i][k+2] = board[i][k];
-                board[i][k] = -1;
-                if(play(board, depth+1)){
+                if(jumpAndPlay(board,i,k,0,1,depth)){
                     console.log("Jump right from row "+i+" col "+k);
-                    return true;  //figure out a way to return path.
-                }else{ //reset
-                    board[i][k] = board[i][k+2];
-                    board[i][k+2] = -1;
-                    board[i][k+1] = jumped;
+                    return true;
                 }
             }
             //jump left
             if(k - 2 >= 0 && board[i][k-2] == -1 && board[i][k-1] != -1){
                 //console.log(board[i][k]+" can jump left");
-                var jumped = board[i][k-1];
-                board[i][k-1] = -1;
-                board[i][k-2] = board[i][k];
-                board[i][k] = -1;
-                if(play(board,depth+1)){
+                if(jumpAndPlay(board,i,k,0,-1,depth)){
                     console.log("Jump left from row "+i+" col "+k);
-                    return true;  //figure out a way to return path.
-                }else{ //reset
-                    board[i][k] = board[i][k-2];
-                    board[i][k-2] = -1;
-                    board[i][k-1] = jumped;
+                    return true;
                 }
             }
             //jump right up
             if(k <= i-2 && board[i-2][k] == -1 && board[i-1][k] != -1){
                 //console.log(board[i][k]+" can jump right up");
-                var jumped = board[i-1][k];
-                board[i-1][k] = -1;
-                board[i-2][k] = board[i][k];
-                board[i][k] = -1;
-                if(play(board,depth+1)){
+                if(jumpAndPlay(board,i,k,-1,0,depth)){
                     console.log("Jump right up from row "+i+" col "+k);
-                    return true;  //figure out a way to return path.
-                }else{ //reset
-                    board[i][k] = board[i-2][k];
-                    board[i-2][k] = -1;
-                    board[i-1][k] = jumped;
+                    return true;
                 }
             }
             //jump left down
             if(i+2 < 5 && board[i+2][k] == -1 && board[i+1][k] != -1){
                 //console.log(board[i][k]+" can jump left down");
-                var jumped = board[i+1][k];
-                board[i+1][k] = -1;
-                board[i+2][k] = board[i][k];
-                board[i][k] = -1;
-                if(play(board,depth+1)){
+                if(jumpAndPlay(board,i,k,1,0,depth)){
                     console.log("Jump left down from row "+i+" col "+k);
-                    return true;  //figure out a way to return path.
-                }else{ //reset
-                    board[i][k] = board[i+2][k];
-                    board[i+2][k] = -1;
-                    board[i+1][k] = jumped;
+                    return true;
                 }
             }
             //jump right down
             if(i+2 < 5 && board[i+2][k+2] == -1 && board[i+1][k+1] != -1){
                 //console.log(board[i][k]+" can jump right down");
-                var jumped = board[i+1][k+1];
-                board[i+1][k+1] = -1;
-                board[i+2][k+2] = board[i][k];
-                board[i][k] = -1;
-                if(play(board,depth+1)){
+                if(jumpAndPlay(board,i,k,1,1,depth)){
                     console.log("Jump right down from row "+i+" col "+k);
-                    return true;  //figure out a way to return path.
-                }else{ //reset
-                    board[i][k] = board[i+2][k+2];
-                    board[i+2][k+2] = -1;
-                    board[i+1][k+1] = jumped;
+                    return true;
                 }
             }
             //jump left up
             if(k-2 >= 0 && board[i-2][k-2] == -1 && board[i-1][k-1] != -1){
                 //console.log(board[i][k]+" can jump left up");
-                var jumped = board[i-1][k-1];
-                board[i-1][k-1] = -1;
-                board[i-2][k-2] = board[i][k];
-                board[i][k] = -1;
-                if(play(board,depth+1)){
+                if(jumpAndPlay(board,i,k,-1,-1,depth)){
                     console.log("Jump left up from row "+i+" col "+k);
-                    return true;  //figure out a way to return path.
-                }else{ //reset
-                    board[i][k] = board[i-2][k-2];
-                    board[i-2][k-2] = -1;
-                    board[i-1][k-1] = jumped;
+                    return true;
                 }
             }
         }
@@ -150,6 +102,21 @@ function play(board, depth){
         //play first found
         //if found add move to list and return
         //if not found return false
+}
+
+function jumpAndPlay(board, row, col, dirR, dirC, depth){
+    var jumped = board[row+dirR][col+dirC];
+    board[row+dirR][col+dirC] = -1;
+    board[row+dirR*2][col+dirC*2] = board[row][col];
+    board[row][col] = -1;
+    if(play(board,depth+1)){
+       // console.log("Jump left up from row "+i+" col "+k);
+        return true;  //figure out a way to return path.
+    }else{ //reset
+        board[row][col] = board[row+dirR*2][col+dirC*2];
+        board[row+dirR*2][col+dirC*2] = -1;
+        board[row+dirR][col+dirC] = jumped;
+    }
 }
 
 var board = makeBoard(0);
