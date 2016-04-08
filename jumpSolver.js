@@ -1,5 +1,11 @@
-//jump solver
-//
+//JumpSolver
+//@Author Alan Peters
+//Quick program to brute force a solution to the Cracker Barrel
+//Jump All But One triangle games.
+//http://ytimg.googleusercontent.com/vi/kZ6zr_EG5eI/mqdefault.jpg
+
+
+
 //blank spaces = -1
 
 //  0 1 2 3 4
@@ -98,10 +104,6 @@ function play(board, depth){
     }
 
     return false;
-    //for each
-        //play first found
-        //if found add move to list and return
-        //if not found return false
 }
 
 function jumpAndPlay(board, row, col, dirR, dirC, depth){
@@ -110,13 +112,13 @@ function jumpAndPlay(board, row, col, dirR, dirC, depth){
     board[row+dirR*2][col+dirC*2] = board[row][col];
     board[row][col] = -1;
     if(play(board,depth+1)){
-       // console.log("Jump left up from row "+i+" col "+k);
         return true;  //figure out a way to return path.
     }else{ //reset
         board[row][col] = board[row+dirR*2][col+dirC*2];
         board[row+dirR*2][col+dirC*2] = -1;
         board[row+dirR][col+dirC] = jumped;
     }
+    return false;
 }
 
 var board = makeBoard(0);
